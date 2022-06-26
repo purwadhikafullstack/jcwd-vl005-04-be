@@ -34,6 +34,7 @@ const routers = require('./routers')
 app.use('/api/transaction', routers.transaction_routers)
 app.use('/api/users', routers.user_routers)
 app.use('/api/admin', routers.admin_routers)
+app.use('/api/products', routers.product_routers)
 
 // binding to local port
 const PORT = 5000
