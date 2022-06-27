@@ -1,8 +1,18 @@
 const database = require('../config').promise()
 
 module.exports.getProducts = async (req, res) => {
+    let sort, order
+
+    if (req.query) {
+        sort = req.query._sort
+        order = req.query._order
+    } else {
+        sort = 'products.id'
+        order = 'ASC'
+    }
+
     try {
-        const GET_PRODUCTS = 'SELECT products.*, product_types.name AS type, product_units.abbreviation AS unit FROM products INNER JOIN product_types ON product_types.id = products.product_type_id INNER JOIN product_units ON product_units.id = products.product_unit_id;' 
+        const GET_PRODUCTS = `SELECT products.*, product_types.name AS type, product_units.abbreviation AS unit FROM products INNER JOIN product_types ON product_types.id = products.product_type_id INNER JOIN product_units ON product_units.id = products.product_unit_id ORDER BY ${sort} ${order};` 
         const [ PRODUCTS ] = await database.execute(GET_PRODUCTS)
 
         console.log(PRODUCTS)
