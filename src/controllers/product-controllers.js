@@ -38,11 +38,11 @@ module.exports.getProductById = async (req, res) => {
 }
 
 module.exports.createProduct = async (req, res) => {
-    const {name, product_type_id, bottle_stock, bottle_volume, total_quantity, price_per_unit, product_unit_id} = req.body
+    const {name, product_type_id, bottle_stock, bottle_volume, total_quantity, price_per_unit, product_unit_id, product_category_id} = req.body
 
     try {
-        const INSERT_PRODUCT = `INSERT INTO products (name, product_type_id, bottle_stock, bottle_volume, total_quantity, price_per_unit, product_unit_id)
-            VALUES ('${name}', ${product_type_id}, ${bottle_stock}, ${bottle_volume}, ${total_quantity}, ${price_per_unit}, ${product_unit_id});`
+        const INSERT_PRODUCT = `INSERT INTO products (name, product_type_id, bottle_stock, bottle_volume, total_quantity, price_per_unit, product_unit_id, product_category_id)
+            VALUES ('${name}', ${product_type_id}, ${bottle_stock}, ${bottle_volume}, ${total_quantity}, ${price_per_unit}, ${product_unit_id}, ${product_category_id});`
         const PRODUCT = await database.execute(INSERT_PRODUCT)
 
         return res.status(200).send(PRODUCT)
