@@ -3,8 +3,12 @@ const database = require('../config').promise()
 const table_name = 'product_categories'
 
 module.exports.getCategories = async (req, res) => {
+    const active = req.query._active || 0
     try {
-        const GET_CATEGORIES = `SELECT * FROM ${table_name}`
+        let GET_CATEGORIES = `SELECT * FROM ${table_name}`
+
+        if(active) GET_CATEGORIES += ` WHERE is_active = ${database.escape(active)}`
+
         let [ CATEGORIES ] = await database.execute(GET_CATEGORIES)
 
         console.log(CATEGORIES)
