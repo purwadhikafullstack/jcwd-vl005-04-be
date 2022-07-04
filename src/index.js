@@ -36,6 +36,7 @@ app.use('/api/users', routers.user_routers)
 app.use('/api/admin', routers.admin_routers)
 app.use('/api/products', routers.product_routers)
 app.use('/api/categories', routers.category_routers)
+app.use('/api/cart', routers.cart_routers)
 
 // binding to local port
 const PORT = 5000
