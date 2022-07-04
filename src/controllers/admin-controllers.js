@@ -17,7 +17,6 @@ module.exports.getAdmins = async(req,res) =>{
 }
 module.exports.getAdminById = async(req,res) =>{
     const id = req.params.id
-    console.log(id)
     try{
         const GET_ADMIN = `SELECT * FROM admins WHERE id = ?`
         let [ADMIN] = await database.execute(GET_ADMIN, [id]);
@@ -42,6 +41,12 @@ module.exports.addNewAdmin = async(req,res) =>{
         let [ADMIN] = await database.execute(GET_ADMIN, [body.username])
         if(ADMIN.length){
             return res.status(400).send("Username already used");
+        }
+
+        const GET_ADMIN2 = `SELECT * FROM admins WHERE email = ?`
+        let [ADMIN2] = await database.execute(GET_ADMIN2, [body.email])
+        if(ADMIN2.length){
+            return res.status(400).send("Email has been used");
         }
 
         const salt = await bcrypt.genSalt(10)
