@@ -4,7 +4,7 @@ module.exports.getTransactions = async(req,res) =>{
     const limit = Number(req.query._limit) || 5
     const page = Number(req.query._page) || 1
     const order = req.query._sortDate || "DESC"
-    const filter = req.query._filterDate || "All"
+    let filter = req.query._filterDate || "All"
     const currDate = new Date();
 
     const customDateStart = 1;
@@ -14,6 +14,10 @@ module.exports.getTransactions = async(req,res) =>{
     const customMonthEnd = req.query._filterCustomMonthEnd || (currDate.getMonth()+1).toString();
     const customYearEnd = req.query._filterCustomYearEnd || currDate.getDate().toString();
     let customDateEnd;
+
+    if(filter == "Custom" && req.query._filterCustomMonthStart == undefined){
+        filter = "All"
+    }
 
     if(customMonthEnd==4||customMonthEnd==6||customMonthEnd==9||customMonthEnd==11){
         customDateEnd=30;
@@ -105,11 +109,11 @@ module.exports.getTransactionsByUserId = async(req,res) =>{
     const limit = Number(req.query._limit) || 5
     const page = Number(req.query._page) || 1
     const order = req.query._sortDate || "DESC"
-    const filter = req.query._filterDate || "All"
+    let filter = req.query._filterDate || "All"
     const offset = (page - 1) * limit
 
     const currDate = new Date();
-    
+
     const customDateStart = 1;
     const customMonthStart = req.query._filterCustomMonthStart || (currDate.getMonth()+1).toString();
     const customYearStart = req.query._filterCustomYearStart || currDate.getDate().toString();
@@ -117,6 +121,10 @@ module.exports.getTransactionsByUserId = async(req,res) =>{
     const customMonthEnd = req.query._filterCustomMonthEnd || (currDate.getMonth()+1).toString();
     const customYearEnd = req.query._filterCustomYearEnd || currDate.getDate().toString();
     let customDateEnd;
+
+    if(filter == "Custom"&& req.query._filterCustomMonthStart == undefined){
+        filter = "All"
+    }
 
     if(customMonthEnd==4||customMonthEnd==6||customMonthEnd==9||customMonthEnd==11){
         customDateEnd=30;
