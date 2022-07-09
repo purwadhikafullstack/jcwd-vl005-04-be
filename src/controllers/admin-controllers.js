@@ -161,3 +161,69 @@ module.exports.resetPassword = async(req,res) =>{
         res.status(500).send('Internal service error')
     }
 }
+
+module.exports.getReportData = async (req, res) => {
+    const pDate = req.body.date;
+    const resp = {};
+
+    const dbArgs = [
+        pDate,
+        moment(pDate).add(1, "days").format("YYYY-MM-DD"),
+        "Approved",
+    ];
+    //   profit
+    try {
+        const queryProfit = `select SUM(ti.price-p.capital_price) as profit from transactions t
+    join transaction_statuses ts on(t.id=ts.id)
+    join transaction_items ti on(t.id=ti.transaction_id)
+    join products p on(ti.product_id =p.id)
+    where t.created_at>= ? and t.created_at < ?
+    and ts.name = ?`;
+        let [rowProfit] = await database.execute(queryProfit, dbArgs);
+        console.log("rowProfit");
+        console.log(rowProfit);
+
+        if (rowProfit[0].profit === null) {
+            rowProfit[0].profit = 0;
+        }
+
+        resp.profit = rowProfit[0].profit;
+
+        //   total transactions
+        const queryTotalTrn = `select count(t.id) as total_trn from transactions t 
+    join transaction_statuses ts on(t.id=ts.id)
+    where t.created_at>=? and t.created_at <?
+    and ts.name =?; 
+    `;
+        let [totalTrnRow] = await database.execute(queryTotalTrn, dbArgs);
+        console.log("totalTrnRow");
+        console.log(totalTrnRow);
+
+        if (totalTrnRow[0].total_trn === null) {
+            totalTrnRow[0].total_trn = 0;
+        }
+
+        resp.total_transactions = totalTrnRow[0].total_trn;
+
+        //   total transactions
+        const queryTop3Product = `
+        select SUM(ti.volume) as vol, p.name as product_name
+        from transactions t 
+        join transaction_statuses ts on(t.id=ts.id)
+        join transaction_items ti on(t.id=ti.transaction_id)
+        join products p on(p.id=ti.product_id)
+        where t.created_at>=? and t.created_at < ?
+        and ts.name =?
+        group by ti.product_id order by vol desc limit 3; `;
+        let [top3ProductRow] = await database.execute(queryTop3Product, dbArgs);
+        console.log("top3ProductRow");
+        console.log(top3ProductRow);
+
+        resp.top_products = top3ProductRow;
+
+        res.status(200).send(resp);
+    } catch (error) {
+        console.log("error : ", error);
+        res.status(500).send("Internal service error");
+    }
+};
