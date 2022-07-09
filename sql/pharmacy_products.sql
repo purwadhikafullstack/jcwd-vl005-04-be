@@ -29,6 +29,7 @@ CREATE TABLE `products` (
   `bottle_stock` int DEFAULT '0',
   `bottle_volume` int DEFAULT '0',
   `total_quantity` double NOT NULL,
+  `price_capital` double NOT NULL,
   `price_per_unit` double NOT NULL,
   `product_unit_id` tinyint NOT NULL,
   `product_img_path` varchar(100) DEFAULT NULL,
