@@ -51,7 +51,7 @@ module.exports.emailForgotPassword = async function (req, res) {
     let dbRes;
     try {
         [dbRes] = await database.execute(
-            `SELECT * FROM user WHERE username = ? OR email = ?`, [req.body.username_or_email, req.body.username_or_email]
+            `SELECT * FROM users WHERE username = ? OR email = ?`, [req.body.username_or_email, req.body.username_or_email]
         );
     } catch (error) {
         res.status(400).send({
@@ -77,7 +77,7 @@ module.exports.emailForgotPassword = async function (req, res) {
     const token = v4();
     try {
         await database.execute(
-            `UPDATE user SET forgot_password_token = ? WHERE email = ?`, [token, email]
+            `UPDATE users SET forgot_password_token = ? WHERE email = ?`, [token, email]
         );
     } catch (error) {
         res.status(500).send({
@@ -128,7 +128,7 @@ module.exports.resetPasswordTokenValidate = async function (req, res) {
     let dbRes;
     try {
         [dbRes] = await database.execute(
-            `SELECT * FROM user where forgot_password_token= ?`, [req.body.token]
+            `SELECT * FROM users where forgot_password_token= ?`, [req.body.token]
         );
     } catch (error) {
         res.status(400).send({
@@ -176,7 +176,7 @@ module.exports.resetPassword = async function (req, res) {
     const pwdEnc = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
     try {
         await database.execute(
-            `UPDATE user SET password = ? where forgot_password_token= ?`, [pwdEnc, req.body.token]
+            `UPDATE users SET password = ? where forgot_password_token= ?`, [pwdEnc, req.body.token]
         );
     } catch (error) {
         res.status(400).send({
@@ -209,11 +209,11 @@ module.exports.register = async function (req, res) {
 
     try {
         await database.execute(
-            `INSERT INTO user (username, email, birthday, password, verification_token) VALUES (?, ?, ?, ?, ?);`,
+            `INSERT INTO users (username, email, birthday, password, verification_token) VALUES (?, ?, ?, ?, ?);`,
             [req.body.username, req.body.email, req.body.birthday, pwdEnc, verificationToken]
         );
     } catch (error) {
-        console.error("Failed insert user", error.original.sqlMessage);
+        console.error("Failed insert user", error);
         res.status(500).send({
             message: "username or email already exist",
             status: "error",
@@ -258,7 +258,7 @@ module.exports.emailVerifyResend = async function (req, res) {
     let dbRes;
     try {
         [dbRes] = await database.execute(
-            `SELECT * FROM user WHERE username = ? OR email = ?`,
+            `SELECT * FROM users WHERE username = ? OR email = ?`,
             [req.body.username_or_email, req.body.username_or_email]
         );
     } catch (error) {
@@ -289,7 +289,7 @@ module.exports.emailVerifyResend = async function (req, res) {
         const verificationToken = v4();
         try {
             await database.execute(
-                `UPDATE user set verification_token= ? where email= ? or username= ?`,
+                `UPDATE users set verification_token= ? where email= ? or username= ?`,
                 [verificationToken, req.body.username_or_email, req.body.username_or_email]
             );
         } catch (error) {
@@ -345,7 +345,7 @@ module.exports.emailVerify = async function (req, res) {
     let dbRes;
     try {
         [dbRes] = await database.execute(
-            `SELECT * FROM user WHERE verification_token = ?`, [req.body.token]
+            `SELECT * FROM users WHERE verification_token = ?`, [req.body.token]
         );
     } catch (error) {
         res.status(400).send({
@@ -376,7 +376,7 @@ module.exports.emailVerify = async function (req, res) {
     }
     try {
         await database.execute(
-            `UPDATE user SET verification = TRUE where verification_token= ?`, [req.body.token]
+            `UPDATE users SET verification = TRUE where verification_token= ?`, [req.body.token]
         );
     } catch (error) {
         res.status(400).send({
@@ -397,7 +397,7 @@ module.exports.login = async function (req, res) {
     let dbRes;
     try {
         [dbRes] = await database.execute(
-            `SELECT * FROM user WHERE username = ? OR email = ?`,
+            `SELECT * FROM users WHERE username = ? OR email = ?`,
             [req.body.username_or_email, req.body.username_or_email]
         );
     } catch (error) {
