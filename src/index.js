@@ -70,7 +70,9 @@ app.use('/api/admin', routers.admin_routers)
 app.use('/api/products', routers.product_routers)
 app.use('/api/categories', routers.category_routers)
 app.use('/api/cart', routers.cart_routers)
+app.use('/api/auth', routers.auth_routers)
 
 // binding to local port
 const PORT = 5000
 app.listen(PORT, () => console.log(`API is running at port : ${PORT}.`))
+
