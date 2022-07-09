@@ -59,6 +59,7 @@ CREATE TABLE `products` (
   `bottle_stock` int(11) DEFAULT 0,
   `bottle_volume` int(11) DEFAULT 0,
   `total_quantity` double NOT NULL,
+  `price_capital` double NOT NULL,
   `price_per_unit` double NOT NULL,
   `product_unit_id` tinyint(4) NOT NULL,
   `product_category_id` int(11) UNSIGNED DEFAULT NULL,
@@ -69,12 +70,12 @@ CREATE TABLE `products` (
 -- Dumping data for table `products`
 --
 
-INSERT INTO `products` (`id`, `name`, `product_type_id`, `bottle_stock`, `bottle_volume`, `total_quantity`, `price_per_unit`, `product_unit_id`, `product_category_id`, `product_img_path`) VALUES
-(3, 'Albumin', 2, 76, 250, 19000, 3450, 4, NULL, NULL),
-(5, 'Amineptine', 3, 87, 35, 3045, 3250, 5, NULL, NULL),
-(7, 'Asam Mefenamat', 3, 34, 12, 408, 2500, 5, NULL, NULL),
-(8, 'Aspirin', 3, 554, 15, 8310, 7650, 5, NULL, NULL),
-(10, 'Panadol', 3, 1500, 12, 18000, 3750, 5, NULL, NULL);
+INSERT INTO `products` (`id`, `name`, `product_type_id`, `bottle_stock`, `bottle_volume`, `total_quantity`, `price_capital`, `price_per_unit`, `product_unit_id`, `product_category_id`, `product_img_path`) VALUES
+(3, 'Albumin', 2, 76, 250, 19000, 3200, 3450, 4, NULL, NULL),
+(5, 'Amineptine', 3, 87, 35, 3045, 3000, 3250, 5, NULL, NULL),
+(7, 'Asam Mefenamat', 3, 34, 12, 408, 2250, 2500, 5, NULL, NULL),
+(8, 'Aspirin', 3, 554, 15, 8310, 7500, 7650, 5, NULL, NULL),
+(10, 'Panadol', 3, 1500, 12, 18000, 3500, 3750, 5, NULL, NULL);
 
 -- --------------------------------------------------------
 
