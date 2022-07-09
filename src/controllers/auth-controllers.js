@@ -441,7 +441,7 @@ module.exports.login = async function (req, res) {
         const payload = {
             iat: now.unix(),
             // exp: now.add(1, "days").unix(),
-            exp: now.add(10, "seconds").unix(),
+            exp: now.add(1, "day").unix(),
             user: user,
         };
         if (req.body.keep_login === true) {

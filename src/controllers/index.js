@@ -5,13 +5,15 @@ const transaction = require('./transaction-controllers')
 const product = require('./product-controllers')
 const category = require('./category-controllers')
 const cart = require('./cart-controllers')
+const checkout = require('./checkout-controllers')
 
 module.exports = {
-    admin, 
-    auth, 
-    user, 
+    admin,
+    auth,
+    user,
     transaction,
     product,
     category,
-    cart
+    cart,
+    checkout,
 }
