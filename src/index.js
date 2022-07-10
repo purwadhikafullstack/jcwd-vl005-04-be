@@ -24,12 +24,10 @@ const io = socketIo(server,{
     }
 }) //in case server and client run on different urls
 io.on('connection',(socket)=>{
-  console.log('client connected: ',socket.id)
+  // console.log('client connected: ',socket.id)
   socket.join('clock-room')
 
   socket.on('finishTransaction',()=>{
-    console.log("beli")
-
     socket.emit('confirmasiCheckOutBerhasil',"Transaction ID # successfully created.")
   })
 
@@ -37,9 +35,9 @@ io.on('connection',(socket)=>{
     console.log(reason)
   })
 })
+
 setInterval(()=>{
      io.to('clock-room').emit('time', new Date())
-    //  io.emit("hello", "world");
 },1000)
 
 const PORT2 = 5001
