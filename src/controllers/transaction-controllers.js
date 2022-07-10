@@ -42,7 +42,7 @@ module.exports.getTransactions = async(req,res) =>{
         switch(filter){
             case "Custom":
                 GET_TRANSACTIONS = `
-                SELECT id,user_id,inv_number,is_approved, transaction_statuses_id, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
+                SELECT id,user_id,inv_number,status, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
                 FROM transactions 
                 WHERE DATEDIFF("${customYearEnd}-${customMonthEnd}-${customDateEnd}", created_at) >= 0 && DATEDIFF("${customYearStart}-${customMonthStart}-${customDateStart}", created_at) <= 0
                 ORDER BY created_at ${order} 
@@ -52,7 +52,7 @@ module.exports.getTransactions = async(req,res) =>{
                 break;
             case "Week":
                 GET_TRANSACTIONS = `
-                SELECT id,user_id,inv_number,is_approved, transaction_statuses_id, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
+                SELECT id,user_id,inv_number,status, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
                 FROM transactions 
                 WHERE DATEDIFF("${year}-${month}-${date}", created_at) <= 7
                 ORDER BY created_at ${order} 
@@ -63,7 +63,7 @@ module.exports.getTransactions = async(req,res) =>{
             
             case "Month":
                 GET_TRANSACTIONS = `
-                SELECT id,user_id,inv_number,is_approved, transaction_statuses_id, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
+                SELECT id,user_id,inv_number,status, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
                 FROM transactions 
                 WHERE DATEDIFF("${year}-${month}-${date}", created_at) <= 30
                 ORDER BY created_at ${order} 
@@ -74,7 +74,7 @@ module.exports.getTransactions = async(req,res) =>{
 
             case "Year":
                 GET_TRANSACTIONS = `
-                SELECT id,user_id,inv_number,is_approved, transaction_statuses_id, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
+                SELECT id,user_id,inv_number,status, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
                 FROM transactions 
                 WHERE DATEDIFF("${year}-${month}-${date}", created_at) <= 365
                 ORDER BY created_at ${order} 
@@ -85,7 +85,7 @@ module.exports.getTransactions = async(req,res) =>{
 
             default:
             GET_TRANSACTIONS = `
-            SELECT id,user_id,inv_number,is_approved, transaction_statuses_id, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
+            SELECT id,user_id,inv_number,status, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
             FROM transactions 
             ORDER BY created_at ${order} 
             LIMIT ${database.escape(offset)}, ${database.escape(limit)}`;
@@ -148,7 +148,7 @@ module.exports.getTransactionsByUserId = async(req,res) =>{
         switch(filter){
             case "Custom":
                 GET_TRANSACTIONS = `
-                SELECT id,user_id,inv_number,is_approved, transaction_statuses_id, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
+                SELECT id,user_id,inv_number,status, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
                 FROM transactions 
                 WHERE user_id=? && DATEDIFF("${customYearEnd}-${customMonthEnd}-${customDateEnd}", created_at) >= 0 && DATEDIFF("${customYearStart}-${customMonthStart}-${customDateStart}", created_at) <= 0
                 ORDER BY created_at ${order} 
@@ -158,7 +158,7 @@ module.exports.getTransactionsByUserId = async(req,res) =>{
 
             case "Week":
                 GET_TRANSACTIONS = `
-                SELECT id,user_id,inv_number,is_approved, transaction_statuses_id, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
+                SELECT id,user_id,inv_number,status, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
                 FROM transactions 
                 WHERE user_id=? && DATEDIFF("${year}-${month}-${date}", created_at) <= 7
                 ORDER BY created_at ${order} 
@@ -168,7 +168,7 @@ module.exports.getTransactionsByUserId = async(req,res) =>{
             
             case "Month":
                 GET_TRANSACTIONS = `
-                SELECT id,user_id,inv_number,is_approved, transaction_statuses_id, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
+                SELECT id,user_id,inv_number,status, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
                 FROM transactions 
                 WHERE user_id=? && DATEDIFF("${year}-${month}-${date}", created_at) <= 30
                 ORDER BY created_at ${order} 
@@ -178,7 +178,7 @@ module.exports.getTransactionsByUserId = async(req,res) =>{
 
             case "Year":
                 GET_TRANSACTIONS = `
-                SELECT id,user_id,inv_number,is_approved, transaction_statuses_id, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
+                SELECT id,user_id,inv_number,status, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
                 FROM transactions 
                 WHERE user_id=? && DATEDIFF("${year}-${month}-${date}", created_at) <= 365
                 ORDER BY created_at ${order} 
@@ -188,7 +188,7 @@ module.exports.getTransactionsByUserId = async(req,res) =>{
 
             default:
             GET_TRANSACTIONS = `
-            SELECT id,user_id,inv_number,is_approved, transaction_statuses_id, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
+            SELECT id,user_id,inv_number,status, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id 
             FROM transactions 
             WHERE user_id=? 
             ORDER BY created_at ${order} 
@@ -218,7 +218,7 @@ module.exports.approveTransaction = async(req,res) =>{
     const user_id = req.body.user_id
     console.log(user_id)
     try{
-        const APPROVE_TRANSACTION = `UPDATE transactions SET is_approved = 1 WHERE id = ?`
+        const APPROVE_TRANSACTION = `UPDATE transactions SET status = 'approved' WHERE id = ?`
         const [INFO] = await database.execute(APPROVE_TRANSACTION, [id]);
 
         const GET_USER_EMAIL = `SELECT * FROM users WHERE id = ?`
@@ -245,14 +245,12 @@ module.exports.approveTransaction = async(req,res) =>{
             subject : 'Pharmacy Transaction Invoice',
             html : `
                 <body>
-                    <p>Thank you for Purchasing from our store!</p>
+                    <h1>Pharmacy Invoice ${transaction.inv_number}</h1>
+                    <p>Thank you for Purchasing from our store! Here are the details of the transaction.</p>
                     <table style = "border: 1px solid black; mborder-collapse: collapse;">
                         <tr style = "border: 1px solid black; mborder-collapse: collapse;">
                             <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
                                 Invoice Number
-                            </th>
-                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
-                                Transaction Approved?
                             </th>
                             <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
                                 Transaction Status
@@ -269,10 +267,7 @@ module.exports.approveTransaction = async(req,res) =>{
                                 ${transaction.inv_number}
                             </td>
                             <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
-                                Approved
-                            </td>
-                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
-                                ${transaction.transaction_statuses_id}
+                                ${transaction.status}
                             </td>
                             <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
                                 ${transaction.created_at}
@@ -282,6 +277,10 @@ module.exports.approveTransaction = async(req,res) =>{
                             </td>
                         </tr>
                     </table>
+                    <p><a href="http://localhost:3000/invoice/${transaction.inv_number}">View Invoice Here</a></p>
+                    <p>Contact Us : +62 7777 7777 777</p>
+                    <p>WhatsApp : +62 7777 7777 777</p>
+                    <p>Instagram : <a href="https://www.instagram.com">Check our instagram page here</a></p>
                 </body>
             `
         })
@@ -292,12 +291,46 @@ module.exports.approveTransaction = async(req,res) =>{
         res.status(500).send('Internal service error')
     }
 }
+
+module.exports.getTransactionDetailByInvoiceId = async(req,res)=>{
+    const id = req.params.id
+    try{
+        const GET_TRANSACTION = `
+        SELECT * FROM transaction_items 
+        JOIN products ON transaction_items.product_id = products.id 
+        JOIN transactions ON transactions.id = transaction_items.transaction_id
+        JOIN users ON users.id = transactions.user_id
+        JOIN product_units ON product_units.id = products.product_unit_id
+        WHERE transactions.inv_number = ?`
+        const [TRANSACTION] = await database.execute(GET_TRANSACTION, [id]);
+        res.status(200).send(TRANSACTION)
+    }
+    catch(error){
+        console.log('error : ',error);
+        res.status(500).send('Internal service error')
+    }
+}
+
+module.exports.getTransactionByInvoiceId = async(req,res)=>{
+    const id = req.params.id
+    try{
+        const GET_TRANSACTION = `
+        SELECT id,user_id,inv_number,status, convert(created_at, CHAR) AS created_at, payment_proof_path, total_payment, address_id FROM transactions WHERE inv_number = ?`
+        const [TRANSACTION] = await database.execute(GET_TRANSACTION, [id]);
+        res.status(200).send(TRANSACTION[0])
+    }
+    catch(error){
+        console.log('error : ',error);
+        res.status(500).send('Internal service error')
+    }
+}
+
 module.exports.rejectTransaction = async(req,res) =>{
     const id = req.params.id
     const user_id = req.body.user_id
     console.log(user_id)
     try{
-        const APPROVE_TRANSACTION = `UPDATE transactions SET is_approved = 2 WHERE id = ?`
+        const APPROVE_TRANSACTION = `UPDATE transactions SET status = 'rejected' WHERE id = ?`
         const [INFO] = await database.execute(APPROVE_TRANSACTION, [id]);
 
         const GET_USER_EMAIL = `SELECT * FROM users WHERE id = ?`
@@ -361,6 +394,10 @@ module.exports.rejectTransaction = async(req,res) =>{
                             </td>
                         </tr>
                     </table>
+                    <p><a href="http://localhost:3000/invoice/${transaction.inv_number}">View Invoice Here</a></p>
+                    <p>Contact Us : +62 7777 7777 777</p>
+                    <p>WhatsApp : +62 7777 7777 777</p>
+                    <p>Instagram : <a href="https://www.instagram.com">Check our instagram page here</a></p>
                 </body>
             `
         })
