@@ -1,10 +1,13 @@
+const { adminLoginSchema, adminSendForgetSchema, adminResetPasswordSchema, addAdminSchema } = require("../helpers/schema-validation")
 const database = require("../config").promise()
+const nodemailer = require('nodemailer')
+const bcrypt = require('bcrypt')
 
 module.exports.getTransactions = async(req,res) =>{
     const limit = Number(req.query._limit) || 5
     const page = Number(req.query._page) || 1
     const order = req.query._sortDate || "DESC"
-    const filter = req.query._filterDate || "All"
+    let filter = req.query._filterDate || "All"
     const currDate = new Date();
 
     const customDateStart = 1;
@@ -14,6 +17,10 @@ module.exports.getTransactions = async(req,res) =>{
     const customMonthEnd = req.query._filterCustomMonthEnd || (currDate.getMonth()+1).toString();
     const customYearEnd = req.query._filterCustomYearEnd || currDate.getDate().toString();
     let customDateEnd;
+
+    if(filter == "Custom" && req.query._filterCustomMonthStart == undefined){
+        filter = "All"
+    }
 
     if(customMonthEnd==4||customMonthEnd==6||customMonthEnd==9||customMonthEnd==11){
         customDateEnd=30;
@@ -105,11 +112,11 @@ module.exports.getTransactionsByUserId = async(req,res) =>{
     const limit = Number(req.query._limit) || 5
     const page = Number(req.query._page) || 1
     const order = req.query._sortDate || "DESC"
-    const filter = req.query._filterDate || "All"
+    let filter = req.query._filterDate || "All"
     const offset = (page - 1) * limit
 
     const currDate = new Date();
-    
+
     const customDateStart = 1;
     const customMonthStart = req.query._filterCustomMonthStart || (currDate.getMonth()+1).toString();
     const customYearStart = req.query._filterCustomYearStart || currDate.getDate().toString();
@@ -117,6 +124,10 @@ module.exports.getTransactionsByUserId = async(req,res) =>{
     const customMonthEnd = req.query._filterCustomMonthEnd || (currDate.getMonth()+1).toString();
     const customYearEnd = req.query._filterCustomYearEnd || currDate.getDate().toString();
     let customDateEnd;
+
+    if(filter == "Custom"&& req.query._filterCustomMonthStart == undefined){
+        filter = "All"
+    }
 
     if(customMonthEnd==4||customMonthEnd==6||customMonthEnd==9||customMonthEnd==11){
         customDateEnd=30;
@@ -204,10 +215,77 @@ module.exports.getTransactionsByUserId = async(req,res) =>{
 
 module.exports.approveTransaction = async(req,res) =>{
     const id = req.params.id
+    const user_id = req.body.user_id
+    console.log(user_id)
     try{
         const APPROVE_TRANSACTION = `UPDATE transactions SET is_approved = 1 WHERE id = ?`
         const [INFO] = await database.execute(APPROVE_TRANSACTION, [id]);
-        res.status(200).send("Transaction Approved")
+
+        const GET_USER_EMAIL = `SELECT * FROM users WHERE id = ?`
+        const [USER] = await database.execute(GET_USER_EMAIL, [user_id])
+        const email = USER[0].email
+        
+        const GET_TRANSACTION_DATA = `SELECT * FROM transactions WHERE id = ?`
+        const [TRANSACTION] = await database.execute(GET_TRANSACTION_DATA, [id]);
+
+        const transaction = TRANSACTION[0]
+
+        const transporter = nodemailer.createTransport({
+            service : 'gmail',
+            auth : {
+                user : `${email}`,
+                pass : "nyxbegqqntyfvbob"
+            },
+            tls : { rejectUnauthorized : false }
+        })
+
+        await transporter.sendMail({
+            from : '<admin/> sevilenfilbert@gmail.com',
+            to : `${email}`,
+            subject : 'Pharmacy Transaction Invoice',
+            html : `
+                <body>
+                    <p>Thank you for Purchasing from our store!</p>
+                    <table style = "border: 1px solid black; mborder-collapse: collapse;">
+                        <tr style = "border: 1px solid black; mborder-collapse: collapse;">
+                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                Invoice Number
+                            </th>
+                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                Transaction Approved?
+                            </th>
+                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                Transaction Status
+                            </th>
+                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                Created At
+                            </th>
+                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                Total Payment
+                            </th>
+                        </tr style = "border: 1px solid black; mborder-collapse: collapse;">
+                        <tr>
+                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                ${transaction.inv_number}
+                            </td>
+                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                Approved
+                            </td>
+                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                ${transaction.transaction_statuses_id}
+                            </td>
+                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                ${transaction.created_at}
+                            </td>
+                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                ${transaction.total_payment}
+                            </td>
+                        </tr>
+                    </table>
+                </body>
+            `
+        })
+        res.status(200).send("Email Sent")
     }
     catch(error){
         console.log('error : ',error);
@@ -216,9 +294,76 @@ module.exports.approveTransaction = async(req,res) =>{
 }
 module.exports.rejectTransaction = async(req,res) =>{
     const id = req.params.id
+    const user_id = req.body.user_id
+    console.log(user_id)
     try{
         const APPROVE_TRANSACTION = `UPDATE transactions SET is_approved = 2 WHERE id = ?`
         const [INFO] = await database.execute(APPROVE_TRANSACTION, [id]);
+
+        const GET_USER_EMAIL = `SELECT * FROM users WHERE id = ?`
+        const [USER] = await database.execute(GET_USER_EMAIL, [user_id])
+        const email = USER[0].email
+        
+        const GET_TRANSACTION_DATA = `SELECT * FROM transactions WHERE id = ?`
+        const [TRANSACTION] = await database.execute(GET_TRANSACTION_DATA, [id]);
+
+        const transaction = TRANSACTION[0]
+
+        const transporter = nodemailer.createTransport({
+            service : 'gmail',
+            auth : {
+                user : `${email}`,
+                pass : "nyxbegqqntyfvbob"
+            },
+            tls : { rejectUnauthorized : false }
+        })
+
+        await transporter.sendMail({
+            from : '<admin/> sevilenfilbert@gmail.com',
+            to : `${email}`,
+            subject : 'Pharmacy Transaction Rejected',
+            html : `
+                <body>
+                    <p>Your Transaction has been rejected.</p>
+                    <table style = "border: 1px solid black; mborder-collapse: collapse;">
+                        <tr style = "border: 1px solid black; mborder-collapse: collapse;">
+                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                Invoice Number
+                            </th>
+                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                Transaction Approved?
+                            </th>
+                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                Transaction Status
+                            </th>
+                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                Created At
+                            </th>
+                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                Total Payment
+                            </th>
+                        </tr style = "border: 1px solid black; mborder-collapse: collapse;">
+                        <tr>
+                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                ${transaction.inv_number}
+                            </td>
+                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                Rejected
+                            </td>
+                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                ${transaction.transaction_statuses_id}
+                            </td>
+                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                ${transaction.created_at}
+                            </td>
+                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                                ${transaction.total_payment}
+                            </td>
+                        </tr>
+                    </table>
+                </body>
+            `
+        })
         res.status(200).send("Transaction Rejected")
     }
     catch(error){
@@ -226,3 +371,31 @@ module.exports.rejectTransaction = async(req,res) =>{
         res.status(500).send('Internal service error')
     }
 }
+
+// module.exports.sendTransactionEmail = async(req,res) =>{
+//     const id = req.body.id
+//     try{
+//         const transporter = nodemailer.createTransport({
+//             service : 'gmail',
+//             auth : {
+//                 user : `${email}`,
+//                 pass : "nyxbegqqntyfvbob"
+//             },
+//             tls : { rejectUnauthorized : false }
+//         })
+
+//         await transporter.sendMail({
+//             from : '<admin/> sevilenfilbert@gmail.com',
+//             to : `${email}`,
+//             subject : 'Pharmacy Invoice',
+//             html : `
+//                 <p>Thank you for Purchasing from our store!</p>
+//             `
+//         })
+//         res.status(200).send("Email Sent")
+//     }
+//     catch(error){
+//         console.log('error : ',error);
+//         res.status(500).send('Internal service error')
+//     }
+// }
