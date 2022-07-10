@@ -45,6 +45,8 @@ server.listen(PORT2, err=> {
   console.log('Server running on Port', PORT2)
 })
 
+
+
 // config middleware
 app.use(express.json())
 app.use(cors({ exposedHeaders : 'UID' })) //yg dikasih liat apa aja

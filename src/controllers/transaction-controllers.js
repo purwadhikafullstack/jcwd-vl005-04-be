@@ -245,7 +245,8 @@ module.exports.approveTransaction = async(req,res) =>{
             subject : 'Pharmacy Transaction Invoice',
             html : `
                 <body>
-                    <p>Thank you for Purchasing from our store!</p>
+                    <h1>Pharmacy Invoice ${transaction.inv_number}</h1>
+                    <p>Thank you for Purchasing from our store! Here are the details of the transaction.</p>
                     <table style = "border: 1px solid black; mborder-collapse: collapse;">
                         <tr style = "border: 1px solid black; mborder-collapse: collapse;">
                             <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
@@ -282,6 +283,9 @@ module.exports.approveTransaction = async(req,res) =>{
                             </td>
                         </tr>
                     </table>
+                    <p>Contact Us : +62 7777 7777 777</p>
+                    <p>WhatsApp : +62 7777 7777 777</p>
+                    <p>Instagram : <a href="https://www.instagram.com">Check our instagram page here</a></p>
                 </body>
             `
         })
