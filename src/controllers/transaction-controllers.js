@@ -2,6 +2,7 @@ const { adminLoginSchema, adminSendForgetSchema, adminResetPasswordSchema, addAd
 const database = require("../config").promise()
 const nodemailer = require('nodemailer')
 const bcrypt = require('bcrypt')
+const puppeteer = require('puppeteer');
 
 module.exports.getTransactions = async(req,res) =>{
     const limit = Number(req.query._limit) || 5
@@ -230,6 +231,13 @@ module.exports.approveTransaction = async(req,res) =>{
 
         const transaction = TRANSACTION[0]
 
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+        await page.goto(`http://localhost:3000/invoice/${transaction.inv_number}`);
+        await page.screenshot({path: `public/${transaction.inv_number}.png`});
+      
+        await browser.close();
+
         const transporter = nodemailer.createTransport({
             service : 'gmail',
             auth : {
@@ -278,6 +286,7 @@ module.exports.approveTransaction = async(req,res) =>{
                         </tr>
                     </table>
                     <p><a href="http://localhost:3000/invoice/${transaction.inv_number}">View Invoice Here</a></p>
+                    <a href="http://localhost:5000/${transaction.inv_number}.png">View as Png</a>
                     <p>Contact Us : +62 7777 7777 777</p>
                     <p>WhatsApp : +62 7777 7777 777</p>
                     <p>Instagram : <a href="https://www.instagram.com">Check our instagram page here</a></p>
@@ -342,6 +351,13 @@ module.exports.rejectTransaction = async(req,res) =>{
 
         const transaction = TRANSACTION[0]
 
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+        await page.goto(`http://localhost:3000/invoice/${transaction.inv_number}`);
+        await page.screenshot({path: `public/${transaction.inv_number}.png`});
+      
+        await browser.close();
+
         const transporter = nodemailer.createTransport({
             service : 'gmail',
             auth : {
@@ -395,6 +411,7 @@ module.exports.rejectTransaction = async(req,res) =>{
                         </tr>
                     </table>
                     <p><a href="http://localhost:3000/invoice/${transaction.inv_number}">View Invoice Here</a></p>
+                    <a href="http://localhost:5000/${transaction.inv_number}.png">View as Png</a>
                     <p>Contact Us : +62 7777 7777 777</p>
                     <p>WhatsApp : +62 7777 7777 777</p>
                     <p>Instagram : <a href="https://www.instagram.com">Check our instagram page here</a></p>
