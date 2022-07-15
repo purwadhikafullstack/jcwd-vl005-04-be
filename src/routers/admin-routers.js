@@ -8,5 +8,6 @@ router.post('/add', admin.addNewAdmin);
 router.post('/login', admin.login);
 router.post('/forget-password', admin.sendForgetEmail);
 router.post('/reset-password', admin.resetPassword);
+router.post("/report", admin.getReportData);
 
 module.exports = router
