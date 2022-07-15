@@ -27,6 +27,7 @@ CREATE TABLE `transaction_items` (
   `product_id` int NOT NULL,
   `volume` int NOT NULL,
   `price` double NOT NULL,
+  `price_capital` double DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`transaction_id`,`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
