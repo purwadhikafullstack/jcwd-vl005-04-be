@@ -33,7 +33,7 @@ module.exports.pendingPaymentList = async (req, res) => {
     }
     try {
         let [list] = await database.execute(`SELECT id, user_id, inv_number, status, created_at, payment_proof_path, total_payment, address_id, shipper_id
-        FROM transactions WHERE user_id=? AND status != 'approved'`, [req.query.user_id])
+        FROM transactions WHERE user_id=?`, [req.query.user_id])
 
         return res.status(200).send(list)
     } catch (error) {

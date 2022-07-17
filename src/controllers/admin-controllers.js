@@ -170,16 +170,14 @@ module.exports.getReportData = async (req, res) => {
     const dbArgs = [
         pDate,
         moment(pDate).add(1, "days").format("YYYY-MM-DD"),
-        "Approved",
     ];
     //   profit
     try {
-        const queryProfit = `select SUM(ti.price-p.capital_price) as profit from transactions t
-    join transaction_statuses ts on(t.id=ts.id)
+        const queryProfit = `select SUM(ti.price-p.price_capital) as profit from transactions t
     join transaction_items ti on(t.id=ti.transaction_id)
     join products p on(ti.product_id =p.id)
     where t.created_at>= ? and t.created_at < ?
-    and ts.name = ?`;
+    and status = 'approved'`;
         let [rowProfit] = await database.execute(queryProfit, dbArgs);
         console.log("rowProfit");
         console.log(rowProfit);
@@ -189,12 +187,27 @@ module.exports.getReportData = async (req, res) => {
         }
 
         resp.profit = rowProfit[0].profit;
+        
+        // gross
+        const queryGross = `select SUM(ti.price) as gross from transactions t
+    join transaction_items ti on(t.id=ti.transaction_id)
+    join products p on(ti.product_id =p.id)
+    where t.created_at>= ? and t.created_at < ?
+    and status = 'approved'`;
+        let [rowGross] = await database.execute(queryGross, dbArgs);
+        console.log("rowGross");
+        console.log(rowGross);
+
+        if (rowGross[0].gross === null) {
+            rowGross[0].gross = 0;
+        }
+
+        resp.gross = rowGross[0].gross;
 
         //   total transactions
         const queryTotalTrn = `select count(t.id) as total_trn from transactions t 
-    join transaction_statuses ts on(t.id=ts.id)
     where t.created_at>=? and t.created_at <?
-    and ts.name =?; 
+    and status = 'approved'; 
     `;
         let [totalTrnRow] = await database.execute(queryTotalTrn, dbArgs);
         console.log("totalTrnRow");
@@ -210,17 +223,29 @@ module.exports.getReportData = async (req, res) => {
         const queryTop3Product = `
         select SUM(ti.volume) as vol, p.name as product_name
         from transactions t 
-        join transaction_statuses ts on(t.id=ts.id)
         join transaction_items ti on(t.id=ti.transaction_id)
         join products p on(p.id=ti.product_id)
         where t.created_at>=? and t.created_at < ?
-        and ts.name =?
+        and status = 'approved'
         group by ti.product_id order by vol desc limit 3; `;
         let [top3ProductRow] = await database.execute(queryTop3Product, dbArgs);
         console.log("top3ProductRow");
         console.log(top3ProductRow);
 
         resp.top_products = top3ProductRow;
+
+        //   transactions list
+        const queryTrnList = `
+        select t.created_at, t.inv_number, t.total_payment, p.name, ti.volume, ti.price, ti.price_capital, (ti.price-ti.price_capital) as profit, t.payment_proof_path  from transactions t
+    join transaction_items ti on(t.id=ti.transaction_id)
+    join products p on(ti.product_id =p.id)
+    where t.created_at>= ? and t.created_at < ?
+    and status = 'approved' order by t.created_at desc`;
+        let [trnListRow] = await database.execute(queryTrnList, dbArgs);
+        console.log("trnListRow");
+        console.log(trnListRow);
+
+        resp.transaction_list = trnListRow;
 
         res.status(200).send(resp);
     } catch (error) {

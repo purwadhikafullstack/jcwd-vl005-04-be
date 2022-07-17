@@ -46,7 +46,7 @@ server.listen(PORT2, err=> {
   console.log('Server running on Port', PORT2)
 })
 
-
+app.use(express.static('public'))
 
 // config middleware
 app.use(express.json())
