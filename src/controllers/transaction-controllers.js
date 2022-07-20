@@ -229,6 +229,37 @@ module.exports.approveTransaction = async(req,res) =>{
         const GET_TRANSACTION_DATA = `SELECT * FROM transactions WHERE id = ?`
         const [TRANSACTION] = await database.execute(GET_TRANSACTION_DATA, [id]);
 
+        const GET_TRANSACTION_DETAILS = `
+        SELECT * FROM transaction_items 
+        JOIN products ON transaction_items.product_id = products.id 
+        JOIN product_units ON product_units.id = products.product_unit_id
+        WHERE transaction_id = ?`
+        const [TRANSACTIONDETAILS] = await database.execute(GET_TRANSACTION_DETAILS, [id]);
+
+        console.log(TRANSACTIONDETAILS)
+
+        let details = "";
+        let count = 0;
+        TRANSACTIONDETAILS.forEach(item => {
+            count++;
+            details += `
+                <tr style = "border: 1px solid black; border-collapse: collapse;">
+                    <td style = "border: 1px solid black; border-collapse: collapse; padding:10px">
+                        ${count}
+                    </td>
+                    <td style = "border: 1px solid black; border-collapse: collapse; padding:10px">
+                        ${item.name}
+                    </td>
+                    <td style = "border: 1px solid black; border-collapse: collapse; padding:10px">
+                        ${item.volume} ${item.unit_name}
+                    </td>
+                    <td style = "border: 1px solid black; border-collapse: collapse; padding:10px">
+                        Rp. ${item.price}
+                    </td>
+                </tr>
+            `
+        });
+        
         const transaction = TRANSACTION[0]
 
         const browser = await puppeteer.launch();
@@ -255,36 +286,60 @@ module.exports.approveTransaction = async(req,res) =>{
                 <body>
                     <h1>Pharmacy Invoice ${transaction.inv_number}</h1>
                     <p>Thank you for Purchasing from our store! Here are the details of the transaction.</p>
-                    <table style = "border: 1px solid black; mborder-collapse: collapse;">
-                        <tr style = "border: 1px solid black; mborder-collapse: collapse;">
-                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                    <table style = "border: 1px solid black; border-collapse: collapse;">
+                        <tr style = "border: 1px solid black; border-collapse: collapse;">
+                            <th style = "border: 1px solid black; border-collapse: collapse; padding:10px">
                                 Invoice Number
                             </th>
-                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                            <th style = "border: 1px solid black; border-collapse: collapse; padding:10px">
                                 Transaction Status
                             </th>
-                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                            <th style = "border: 1px solid black; border-collapse: collapse; padding:10px">
                                 Created At
                             </th>
-                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                            <th style = "border: 1px solid black; border-collapse: collapse; padding:10px">
                                 Total Payment
                             </th>
-                        </tr style = "border: 1px solid black; mborder-collapse: collapse;">
+                        </tr style = "border: 1px solid black; border-collapse: collapse;">
                         <tr>
-                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                            <td style = "border: 1px solid black; border-collapse: collapse; padding:10px">
                                 ${transaction.inv_number}
                             </td>
-                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                            <td style = "border: 1px solid black; border-collapse: collapse; padding:10px">
                                 ${transaction.status}
                             </td>
-                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                            <td style = "border: 1px solid black; border-collapse: collapse; padding:10px">
                                 ${transaction.created_at}
                             </td>
-                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
-                                ${transaction.total_payment}
+                            <td style = "border: 1px solid black; border-collapse: collapse; padding:10px">
+                                Rp. ${transaction.total_payment}
                             </td>
                         </tr>
                     </table>
+                    <h1>Details</h1>
+
+                    <table style = "border: 1px solid black; border-collapse: collapse;">
+                        <thead>
+                            <tr style = "border: 1px solid black; border-collapse: collapse;">
+                                <th style = "border: 1px solid black; border-collapse: collapse; padding:10px">
+                                    No.
+                                </th>
+                                <th style = "border: 1px solid black; border-collapse: collapse; padding:10px">
+                                    Product Name
+                                </th>
+                                <th style = "border: 1px solid black; border-collapse: collapse; padding:10px">
+                                    Volume
+                                </th>
+                                <th style = "border: 1px solid black; border-collapse: collapse; padding:10px">
+                                    Price
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${details}
+                        </tbody>
+                    </table>
+
                     <p><a href="http://localhost:3000/invoice/${transaction.inv_number}">View Invoice Here</a></p>
                     <a href="http://localhost:5000/${transaction.inv_number}.png">View as Png</a>
                     <p>Contact Us : +62 7777 7777 777</p>
@@ -349,6 +404,36 @@ module.exports.rejectTransaction = async(req,res) =>{
         const GET_TRANSACTION_DATA = `SELECT * FROM transactions WHERE id = ?`
         const [TRANSACTION] = await database.execute(GET_TRANSACTION_DATA, [id]);
 
+        const GET_TRANSACTION_DETAILS = `
+        SELECT * FROM transaction_items 
+        JOIN products ON transaction_items.product_id = products.id 
+        JOIN product_units ON product_units.id = products.product_unit_id
+        WHERE transaction_id = ?`
+        const [TRANSACTIONDETAILS] = await database.execute(GET_TRANSACTION_DETAILS, [id]);
+
+        let details = "";
+        let count = 0;
+        TRANSACTIONDETAILS.forEach(item => {
+            count++;
+            details += `
+                <tr style = "border: 1px solid black; border-collapse: collapse;">
+                    <td style = "border: 1px solid black; border-collapse: collapse; padding:10px">
+                        ${count}
+                    </td>
+                    <td style = "border: 1px solid black; border-collapse: collapse; padding:10px">
+                        ${item.name}
+                    </td>
+                    <td style = "border: 1px solid black; border-collapse: collapse; padding:10px">
+                        ${item.volume} ${item.unit_name}
+                    </td>
+                    <td style = "border: 1px solid black; border-collapse: collapse; padding:10px">
+                        Rp. ${item.price}
+                    </td>
+                </tr>
+            `
+        });
+        
+
         const transaction = TRANSACTION[0]
 
         const browser = await puppeteer.launch();
@@ -373,43 +458,62 @@ module.exports.rejectTransaction = async(req,res) =>{
             subject : 'Pharmacy Transaction Rejected',
             html : `
                 <body>
-                    <p>Your Transaction has been rejected.</p>
-                    <table style = "border: 1px solid black; mborder-collapse: collapse;">
-                        <tr style = "border: 1px solid black; mborder-collapse: collapse;">
-                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                    <h1>Your Pharmacy Transaction has been rejected.</h1>
+                    <table style = "border: 1px solid black; border-collapse: collapse;">
+                        <tr style = "border: 1px solid black; border-collapse: collapse;">
+                            <th style = "border: 1px solid black; border-collapse: collapse; padding:10px">
                                 Invoice Number
                             </th>
-                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
-                                Transaction Approved?
-                            </th>
-                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                            <th style = "border: 1px solid black; border-collapse: collapse; padding:10px">
                                 Transaction Status
                             </th>
-                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                            <th style = "border: 1px solid black; border-collapse: collapse; padding:10px">
                                 Created At
                             </th>
-                            <th style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                            <th style = "border: 1px solid black; border-collapse: collapse; padding:10px">
                                 Total Payment
                             </th>
-                        </tr style = "border: 1px solid black; mborder-collapse: collapse;">
+                        </tr style = "border: 1px solid black; border-collapse: collapse;">
                         <tr>
-                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                            <td style = "border: 1px solid black; border-collapse: collapse; padding:10px">
                                 ${transaction.inv_number}
                             </td>
-                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
-                                Rejected
+                            <td style = "border: 1px solid black; border-collapse: collapse; padding:10px">
+                                ${transaction.status}
                             </td>
-                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
-                                ${transaction.transaction_statuses_id}
-                            </td>
-                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                            <td style = "border: 1px solid black; border-collapse: collapse; padding:10px">
                                 ${transaction.created_at}
                             </td>
-                            <td style = "border: 1px solid black; mborder-collapse: collapse; padding:10px">
+                            <td style = "border: 1px solid black; border-collapse: collapse; padding:10px">
                                 ${transaction.total_payment}
                             </td>
                         </tr>
                     </table>
+
+                    <h1>Details</h1>
+
+                    <table style = "border: 1px solid black; border-collapse: collapse;">
+                        <thead>
+                            <tr style = "border: 1px solid black; border-collapse: collapse;">
+                                <th style = "border: 1px solid black; border-collapse: collapse; padding:10px">
+                                    No.
+                                </th>
+                                <th style = "border: 1px solid black; border-collapse: collapse; padding:10px">
+                                    Product Name
+                                </th>
+                                <th style = "border: 1px solid black; border-collapse: collapse; padding:10px">
+                                    Volume
+                                </th>
+                                <th style = "border: 1px solid black; border-collapse: collapse; padding:10px">
+                                    Price
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${details}
+                        </tbody>
+                    </table>
+
                     <p><a href="http://localhost:3000/invoice/${transaction.inv_number}">View Invoice Here</a></p>
                     <a href="http://localhost:5000/${transaction.inv_number}.png">View as Png</a>
                     <p>Contact Us : +62 7777 7777 777</p>
@@ -425,31 +529,3 @@ module.exports.rejectTransaction = async(req,res) =>{
         res.status(500).send('Internal service error')
     }
 }
-
-// module.exports.sendTransactionEmail = async(req,res) =>{
-//     const id = req.body.id
-//     try{
-//         const transporter = nodemailer.createTransport({
-//             service : 'gmail',
-//             auth : {
-//                 user : `${email}`,
-//                 pass : "nyxbegqqntyfvbob"
-//             },
-//             tls : { rejectUnauthorized : false }
-//         })
-
-//         await transporter.sendMail({
-//             from : '<admin/> sevilenfilbert@gmail.com',
-//             to : `${email}`,
-//             subject : 'Pharmacy Invoice',
-//             html : `
-//                 <p>Thank you for Purchasing from our store!</p>
-//             `
-//         })
-//         res.status(200).send("Email Sent")
-//     }
-//     catch(error){
-//         console.log('error : ',error);
-//         res.status(500).send('Internal service error')
-//     }
-// }
