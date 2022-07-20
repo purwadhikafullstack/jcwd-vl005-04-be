@@ -411,8 +411,6 @@ module.exports.rejectTransaction = async(req,res) =>{
         WHERE transaction_id = ?`
         const [TRANSACTIONDETAILS] = await database.execute(GET_TRANSACTION_DETAILS, [id]);
 
-        console.log(TRANSACTIONDETAILS)
-
         let details = "";
         let count = 0;
         TRANSACTIONDETAILS.forEach(item => {

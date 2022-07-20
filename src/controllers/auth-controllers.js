@@ -222,8 +222,6 @@ module.exports.register = async function (req, res) {
         return;
     }
 
-    console.log("Success insert user.");
-
     const link = `http://localhost:3000/verify-email?token=${verificationToken}`;
 
     const htmlStr = `<html lang="en"><head>
