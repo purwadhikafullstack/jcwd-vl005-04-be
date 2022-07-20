@@ -12,8 +12,6 @@ module.exports.getProducts = async (req, res) => {
             ORDER BY ${sort} ${order};` 
         const [ PRODUCTS ] = await database.execute(GET_PRODUCTS)
 
-        console.log(PRODUCTS)
-
         return res.status(200).send(PRODUCTS)
     } catch (error) {
         console.log('error: ', error)
@@ -27,8 +25,6 @@ module.exports.getProductById = async (req, res) => {
     try {
         const GET_PRODUCT_BY_ID = `SELECT * FROM products WHERE id = ${database.escape(id)}`
         const [ PRODUCT ] = await database.execute(GET_PRODUCT_BY_ID)
-
-        console.log(PRODUCT)
 
         return res.status(200).send(PRODUCT)
     } catch (error) {
