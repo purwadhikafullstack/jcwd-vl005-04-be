@@ -222,8 +222,6 @@ module.exports.register = async function (req, res) {
         return;
     }
 
-    console.log("Success insert user.");
-
     const link = `http://localhost:3000/verify-email?token=${verificationToken}`;
 
     const htmlStr = `<html lang="en"><head>
@@ -409,6 +407,7 @@ module.exports.login = async function (req, res) {
         return;
     }
 
+
     if (dbRes && dbRes.length === 0) {
         res.status(400).send({
             message: "username or email not valid",
@@ -416,6 +415,14 @@ module.exports.login = async function (req, res) {
             success: false,
         });
         return;
+    }
+
+    if(dbRes[0].is_active==0){
+        res.status(400).send({
+            message: "user has been blocked!",
+            status: "error",
+            success: false
+        })
     }
 
     let token = "";
