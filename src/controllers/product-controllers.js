@@ -51,7 +51,28 @@ module.exports.createProduct = async (req, res) => {
 }
 
 module.exports.updateProduct = async (req, res) => {
+    const { id, name, product_type_id, bottle_stock, bottle_volume, total_quantity, price_per_unit, product_unit_id, product_category_id } = req.body
+    
+    try {
+        let category = product_category_id || null
+        const UPDATE_PRODUCT = `UPDATE products
+            SET
+                name = "${name}",
+                product_type_id = ${product_type_id}, 
+                bottle_stock = ${bottle_stock}, 
+                bottle_volume = ${bottle_volume}, 
+                total_quantity = ${total_quantity}, 
+                price_per_unit = ${price_per_unit}, 
+                product_unit_id = ${product_unit_id}, 
+                product_category_id = ${category}
+            WHERE id = ${database.escape(id)}`
+        const [ PRODUCT ] = await database.execute(UPDATE_PRODUCT)
 
+        return res.status(200).send(PRODUCT)
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send('Internal Service Error')
+    }
 }
 
 module.exports.deleteProduct = async (req, res) => {
