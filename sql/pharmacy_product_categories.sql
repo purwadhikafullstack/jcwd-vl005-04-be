@@ -16,26 +16,28 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `transaction_statuses`
+-- Table structure for table `product_categories`
 --
 
-DROP TABLE IF EXISTS `transaction_statuses`;
+DROP TABLE IF EXISTS `product_categories`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `transaction_statuses` (
-  `id` tinyint NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
+CREATE TABLE `product_categories` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `transaction_statuses`
+-- Dumping data for table `product_categories`
 --
 
-LOCK TABLES `transaction_statuses` WRITE;
-/*!40000 ALTER TABLE `transaction_statuses` DISABLE KEYS */;
-/*!40000 ALTER TABLE `transaction_statuses` ENABLE KEYS */;
+LOCK TABLES `product_categories` WRITE;
+/*!40000 ALTER TABLE `product_categories` DISABLE KEYS */;
+INSERT INTO `product_categories` VALUES (1,'Pain Killer',1),(2,'Diabetes',1),(3,'Anxiety Disorder',1),(5,'Kanker Serviks',1),(6,'Ginjal',1);
+/*!40000 ALTER TABLE `product_categories` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

@@ -29,7 +29,7 @@ CREATE TABLE `admins` (
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,6 +38,7 @@ CREATE TABLE `admins` (
 
 LOCK TABLES `admins` WRITE;
 /*!40000 ALTER TABLE `admins` DISABLE KEYS */;
+INSERT INTO `admins` VALUES (2,'asda','anton123','antoniuspetruss@yahoo.com','$2b$10$qMGz3XT5PBQKki7L943PH.tWdyAawXPcrd0s513cIawTqcXa7KmAK'),(3,'babi','babi123','babi@gmail.com','$2b$10$qMGz3XT5PBQKki7L943PH.tWdyAawXPcrd0s513cIawTqcXa7KmAK'),(4,'admin','admin123','sevilenfilbert@gmail.com','$2b$10$Ra/R527xhf2RGQnfqi6bmOUuAgmuqq6u.xKEOZTEsS4.OdKivWPfi');
 /*!40000 ALTER TABLE `admins` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -50,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-06-14  9:03:23
+-- Dump completed on 2022-07-22 10:22:00
