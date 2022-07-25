@@ -7,6 +7,7 @@ router.get('/item/:id', product.getProductById)
 
 router.post('/create', product.createProduct)
 router.post('/update/:id', product.updateProduct)
+router.post('/upload-image', product.uploadProductImage)
 
 router.delete('/delete/:id', product.deleteProduct)
 
