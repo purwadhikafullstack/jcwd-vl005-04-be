@@ -76,13 +76,13 @@ module.exports.login = async(req,res) => {
         const [ADMIN] = await database.execute(GET_ADMIN_BY_EMAIL, [body.email])
 
         if(!ADMIN.length){
-            return res.status(404).send("Username or Password is inccorect")
+            return res.status(404).send("Username or Password is incorrect")
         }
 
         const hashpassword = await bcrypt.compare(body.password, ADMIN[0].password)
         
         if(!hashpassword){
-            return res.status(404).send("Username or Password is inccorect")
+            return res.status(404).send("Username or Password is incorrect")
         }
         else{
             delete ADMIN[0].password

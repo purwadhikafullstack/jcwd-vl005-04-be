@@ -27,8 +27,9 @@ CREATE TABLE `user_cart` (
   `product_id` int NOT NULL,
   `volume` int NOT NULL,
   `price` double NOT NULL,
-  PRIMARY KEY (`user_id`,`product_id`),
-  KEY `product_id` (`product_id`),
+  `created_at` date NOT NULL DEFAULT (curdate()),
+  KEY `user_cart_ibfk_1` (`user_id`),
+  KEY `user_cart_ibfk_2` (`product_id`),
   CONSTRAINT `user_cart_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `user_cart_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -52,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-06-14  9:03:22
+-- Dump completed on 2022-07-22 10:22:01

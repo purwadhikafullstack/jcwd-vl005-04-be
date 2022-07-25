@@ -16,26 +16,29 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `transaction_statuses`
+-- Table structure for table `shipper`
 --
 
-DROP TABLE IF EXISTS `transaction_statuses`;
+DROP TABLE IF EXISTS `shipper`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `transaction_statuses` (
-  `id` tinyint NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
+CREATE TABLE `shipper` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `desc` varchar(100) NOT NULL,
+  `price` double NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `transaction_statuses`
+-- Dumping data for table `shipper`
 --
 
-LOCK TABLES `transaction_statuses` WRITE;
-/*!40000 ALTER TABLE `transaction_statuses` DISABLE KEYS */;
-/*!40000 ALTER TABLE `transaction_statuses` ENABLE KEYS */;
+LOCK TABLES `shipper` WRITE;
+/*!40000 ALTER TABLE `shipper` DISABLE KEYS */;
+INSERT INTO `shipper` VALUES (1,'TIKI','two working days',10000),(2,'JNE','two working days',9000),(3,'J&T','two working days',8000),(4,'SiCepat','two working days',7000),(5,'GoSend','two hours',18000),(6,'GrabExpress','two hours',18000);
+/*!40000 ALTER TABLE `shipper` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

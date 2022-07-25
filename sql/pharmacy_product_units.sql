@@ -25,8 +25,9 @@ DROP TABLE IF EXISTS `product_units`;
 CREATE TABLE `product_units` (
   `id` tinyint NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
+  `abbreviation` varchar(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -35,6 +36,7 @@ CREATE TABLE `product_units` (
 
 LOCK TABLES `product_units` WRITE;
 /*!40000 ALTER TABLE `product_units` DISABLE KEYS */;
+INSERT INTO `product_units` VALUES (1,'Miligram','mg'),(2,'Gram','g'),(3,'Liter','L'),(4,'Mililiter','mL'),(5,'Pil/Kapsul/Tablet','pcs');
 /*!40000 ALTER TABLE `product_units` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -47,4 +49,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-06-14  9:03:23
+-- Dump completed on 2022-07-22 10:22:01
