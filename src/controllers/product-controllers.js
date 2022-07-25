@@ -1,3 +1,5 @@
+const { mainPath, filePath } = require('../helpers')
+
 const database = require('../config').promise()
 
 module.exports.getProducts = async (req, res) => {
@@ -117,4 +119,34 @@ module.exports.getProductUnits = async (req, res) => {
         console.log(error)
         return res.status(500).send('Internal Service Error')
     }
+}
+
+module.exports.uploadProductImage = async (req, res) => {
+    if (!req.files || Object.keys(req.files).length === 0) {
+        return res.status(400).send('No files were uploaded.');
+    }
+
+    // return res.status(200).send(filePath)
+    const proofFile = req.files.image
+    const suffix = `/images/${req.files.image.name}`
+    const proofPath = `${mainPath}${suffix}`
+    const proofURL = `${filePath}${suffix}`
+    proofFile.mv(proofPath, async function (err) {
+        if (err) {
+            return res.status(500).send(err);
+        }
+
+        try {
+            const UPLOAD_IMAGE = `UPDATE products SET product_img_path = '${proofURL}' WHERE id=${database.escape(req.body.product_id)}`
+            let [ IMAGE ] = await database.execute(UPLOAD_IMAGE)
+            
+            console.log(UPLOAD_IMAGE)
+            console.log(IMAGE)
+
+            return res.status(200).send(IMAGE)
+        } catch (error) {
+            console.log('error: ', error)
+            return res.status(500).send('Internal Service Error')
+        }
+    });
 }
