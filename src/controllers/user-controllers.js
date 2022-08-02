@@ -6,6 +6,7 @@ module.exports.getUsers = async(req,res) =>{
     const limit = Number(req.query._limit) || 5
     const page = Number(req.query._page) || 1
     const offset = (page - 1) * limit
+    console.log(page)
     try{
         const GET_USERS = `SELECT * FROM users LIMIT ${database.escape(offset)}, ${database.escape(limit)}`;
         let [USERS] = await database.execute(GET_USERS)
