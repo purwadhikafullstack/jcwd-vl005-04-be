@@ -7,7 +7,6 @@ const fileUpload = require('express-fileupload');
 
 dotenv.config()
 
-const socketIo = require('socket.io') ;
 
 const database = require('./config')
 const app = express()
@@ -16,35 +15,6 @@ function urlRequestLogger (req, res, next) {
     console.log(`${req.method} : ${req.url}`)
     next()
 }
-
-const server = http.createServer(app)
-const io = socketIo(server,{ 
-    cors: {
-      origin: 'http://localhost:3000'
-    }
-}) //in case server and client run on different urls
-io.on('connection',(socket)=>{
-  // console.log('client connected: ',socket.id)
-  socket.join('clock-room')
-
-  socket.on('finishTransaction',()=>{
-    socket.emit('confirmasiCheckOutBerhasil',"Transaction ID # successfully created.")
-  })
-
-  socket.on('disconnect',(reason)=>{
-    console.log(reason)
-  })
-})
-
-setInterval(()=>{
-     io.to('clock-room').emit('time', new Date())
-},1000)
-
-const PORT2 = process.env.PORT2 || 5001
-server.listen(PORT2, err=> {
-  if(err) console.log(err)
-  console.log('Server running on Port', PORT2)
-})
 
 app.use(express.static('public'))
 
