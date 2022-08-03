@@ -40,7 +40,7 @@ setInterval(()=>{
      io.to('clock-room').emit('time', new Date())
 },1000)
 
-const PORT2 = 5001
+const PORT2 = process.env.PORT2 || 5001
 server.listen(PORT2, err=> {
   if(err) console.log(err)
   console.log('Server running on Port', PORT2)
@@ -80,6 +80,6 @@ app.use('/api/auth', routers.auth_routers)
 app.use('/api/checkout', routers.checkout_routers)
 
 // binding to local port
-const PORT = 5000
+const PORT = process.env.PORT || 5000
 app.listen(PORT, () => console.log(`API is running at port : ${PORT}.`))
 
